@@ -21,7 +21,7 @@
             android:paddingBottom="20dp"
             android:layout_gravity="top"
             android:textAlignment="center"
-            android:text="This is a 2-nd fragment. February"/>
+            android:text="This is a 2-nd fragment. February. Click here to go on 1-st"/>
         <Button
             android:id="@+id/second_button"
             android:layout_width="match_parent"

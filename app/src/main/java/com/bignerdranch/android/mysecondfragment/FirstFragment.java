@@ -8,10 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class FirstFragment extends Fragment {
     public static final String TAG = "#~";
     private Button firstButton;
+    private TextView firstTextView;
 
     public void onCreate(Bundle bundle){
         super.onCreate(bundle);
@@ -22,6 +24,8 @@ public class FirstFragment extends Fragment {
         Log.d(TAG, "1st fragment onCreateView");
         View v = inflater.inflate(R.layout.first_fragment_layout, container, false);
         firstButton = (Button)v.findViewById(R.id.first_button);
+        firstTextView = (TextView) v.findViewById(R.id.first_textview_fragment);
+
 
         firstButton.setOnClickListener(new View.OnClickListener(){
             @Override

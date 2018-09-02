@@ -20,6 +20,8 @@ public class MainActivity extends FragmentActivity {
     public static final String THIRD_FRAGMENT = ThirdFragment.class.getName();
     public static final String FOURTH_FRAGMENT = FourthFragment.class.getName();
 
+    private static final String BACK_STACK_ROOT_TAG = "root_fragment";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,23 +32,28 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void startFirstActivity() {
+        Log.d(TAG, "startFirstActivity() called");
         Fragment fragment = fragmentManager.findFragmentByTag(TAG_FIRST_FRAGMENT);
         if (fragment == null) {
-//            Log.d(TAG, "fragment with TAG_FIRST_FRAGMENT was not found");
+            Log.d(TAG, "TAG_FIRST_FRAGMENT was not found");
             fragment = Fragment.instantiate(this, FIRST_FRAGMENT);
             fragmentManager.beginTransaction()
-                    .add(R.id.fragmentContainer, fragment, TAG_FIRST_FRAGMENT)
+                    .replace(R.id.fragmentContainer, fragment, TAG_FIRST_FRAGMENT)
                     .commit();
+        } else {
+            Log.d(TAG, "FIRST_FRAGMENT NOT null");
         }
     }
 
     public void startSecondActivity() {
+        Log.d(TAG, "                      startSecondActivity() called");
         Fragment fragment = fragmentManager.findFragmentByTag(TAG_SECOND_FRAGMENT);
         if (fragment == null) {
             Log.d(TAG, "                         SECOND_FRAGMENT == null");
             fragment = Fragment.instantiate(this, SECOND_FRAGMENT);
             fragmentManager.beginTransaction()
-                    .add(R.id.fragmentContainer, fragment, TAG_SECOND_FRAGMENT)
+                    .replace(R.id.fragmentContainer, fragment, TAG_SECOND_FRAGMENT)
+                    .addToBackStack(BACK_STACK_ROOT_TAG)
                     .commit();
         } else {
             Log.d(TAG, "                         SECOND_FRAGMENT NOT null");
@@ -59,7 +66,8 @@ public class MainActivity extends FragmentActivity {
             Log.d(TAG, "                                               THIRD_FRAGMENT == null");
             fragment = Fragment.instantiate(this, THIRD_FRAGMENT);
             fragmentManager.beginTransaction()
-                    .add(R.id.fragmentContainer, fragment, TAG_THIRD_FRAGMENT)
+                    .replace(R.id.fragmentContainer, fragment, TAG_THIRD_FRAGMENT)
+                    .addToBackStack(BACK_STACK_ROOT_TAG)
                     .commit();
         } else {
             Log.d(TAG, "                                               THIRD_FRAGMENT NOT null");
@@ -72,11 +80,24 @@ public class MainActivity extends FragmentActivity {
             Log.d(TAG, "                                               FOURTH_FRAGMENT == null");
             fragment = Fragment.instantiate(this, FOURTH_FRAGMENT);
             fragmentManager.beginTransaction()
-                    .add(R.id.fragmentContainer, fragment, TAG_FOURTH_FRAGMENT)
+                    .replace(R.id.fragmentContainer, fragment, TAG_FOURTH_FRAGMENT)
+                    .addToBackStack(BACK_STACK_ROOT_TAG)
                     .commit();
         } else {
             Log.d(TAG, "                                               FOURTH_FRAGMENT NOT null");
         }
+    }
+
+    public void deleteCurrentFragment(Fragment fragment){
+        fragmentManager.beginTransaction()
+                .remove(fragment)
+                .commit();
+    }
+
+    public void onTabSelected() {
+        // Pop off everything up to and including the current tab
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.popBackStack(BACK_STACK_ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
 

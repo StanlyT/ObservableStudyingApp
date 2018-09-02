@@ -8,10 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class FourthFragment extends Fragment{
     public static final String TAG = "#~";
     private Button fourthButton;
+    private TextView fourthTextView;
 
     @Override
     public void onAttach(Context context) {
@@ -27,7 +29,17 @@ public class FourthFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle){
         View v = inflater.inflate(R.layout.fourth_fragment_layout, container, false);
         fourthButton = (Button)v.findViewById(R.id.fourth_button);
+        fourthTextView = (TextView)v.findViewById(R.id.fourth_textview_fragment);
         Log.d(TAG, "                                                                             4-th fragment onCreateView");
+
+        fourthTextView.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                ((MainActivity)getActivity()).deleteCurrentFragment(FourthFragment.this);
+                ((MainActivity)getActivity()).fragmentManager.popBackStack();
+                ((MainActivity)getActivity()).fragmentManager.popBackStack();
+            }
+        });
 
         fourthButton.setOnClickListener(new View.OnClickListener(){
             @Override

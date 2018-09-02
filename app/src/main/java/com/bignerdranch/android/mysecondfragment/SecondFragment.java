@@ -14,6 +14,7 @@ import java.util.UUID;
 public class SecondFragment extends Fragment{
     public static final String TAG = "#~";
     private Button secondButton;
+    private TextView secondTextView;
 
     @Override
     public void onAttach(Context context) {
@@ -29,7 +30,16 @@ public class SecondFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle){
         View v = inflater.inflate(R.layout.second_fragment_layout, container, false);
         secondButton = (Button)v.findViewById(R.id.second_button);
+        secondTextView = (TextView)v.findViewById(R.id.second_textview_fragment);
+
         Log.d(TAG, "                         2-nd fragment onCreateView");
+
+        secondTextView.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                ((MainActivity)getActivity()).deleteCurrentFragment(SecondFragment.this);
+                ((MainActivity)getActivity()).fragmentManager.popBackStack();            }
+        });
 
         secondButton.setOnClickListener(new View.OnClickListener(){
             @Override

@@ -9,13 +9,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.bignerdranch.android.mysecondfragment.MainActivity;
 import com.bignerdranch.android.mysecondfragment.R;
 
+import java.lang.annotation.Target;
+
 public class ThirdFragment extends Fragment{
     public static final String TAG = "#~";
     private Button thirdButton;
+    private TextView thirdTextView;
 
     @Override
     public void onAttach(Context context) {
@@ -31,7 +35,20 @@ public class ThirdFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle){
         View v = inflater.inflate(R.layout.third_fragment_layout, container, false);
         thirdButton = (Button)v.findViewById(R.id.third_button);
+        thirdTextView = (TextView)v.findViewById(R.id.third_textview_fragment);
         Log.d(TAG, "                                               3-rd fragment onCreateView");
+
+        thirdTextView.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Log.d(TAG, "------------------- onClick -------------------");
+                ((MainActivity)getActivity()).deleteCurrentFragment(ThirdFragment.this);
+                ((MainActivity)getActivity()).fragmentManager.popBackStack();
+//                ((MainActivity)getActivity()).onTabSelected();
+//                ((MainActivity)getActivity()).startFirstActivity();
+//                ((MainActivity)getActivity()).startSecondActivity();
+            }
+        });
 
         thirdButton.setOnClickListener(new View.OnClickListener(){
             @Override
