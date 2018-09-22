@@ -113,7 +113,11 @@ public class MainActivity extends FragmentActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
+        if(fragmentManager.getBackStackEntryCount() == 1){
+            finish();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override

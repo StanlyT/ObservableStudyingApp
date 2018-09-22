@@ -5,20 +5,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center">
-    <TextView
-        android:id="@+id/first_textview_fragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:layout_marginBottom="60dp"
-        android:textAlignment="center"
-        android:text="This is a 1-st fragment January"/>
-    <Button
-        android:id="@+id/first_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#FFFF00"
-        android:layout_marginTop="60dp"
-        android:padding="8dp"
-        android:text="1-st fragments button"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/first_textview_fragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:layout_marginTop="16dp"
+            android:textAlignment="center"
+            android:text="This is a 1-st fragment January"/>
+        <Button
+            android:id="@+id/first_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#FFFF00"
+            android:layout_margin="24dp"
+            android:padding="8dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:text="1-st fragments button"/>
+    </RelativeLayout>
 </LinearLayout>
