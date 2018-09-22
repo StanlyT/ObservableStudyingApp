@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.concurrent.TimeUnit;
+
 import rx.Observable;
 import rx.Observer;
 
@@ -33,9 +35,11 @@ public class FirstFragment extends Fragment {
             }
         });
 
-        createObservableWithFrom();
+//        createObservableWithFrom();
 
-        createObservableWithRange();
+//        createObservableWithRange();
+
+        createObservableWithInterval();
 
 
         Log.d(TAG, ".......................................................");
@@ -95,7 +99,31 @@ public class FirstFragment extends Fragment {
 
         Log.d(TAG, "\n.");
     }
-//
+
+    public void createObservableWithInterval(){
+        Log.d(TAG, "\n.");
+
+        Observable <Long> observable = Observable.interval(50, TimeUnit.MILLISECONDS);
+        Observer <Long> observer = new Observer<Long>(){
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, "onError: " + e);
+            }
+
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG, "onNext: " + aLong);
+            }
+        };
+        observable.subscribe(observer);
+        Log.d(TAG, "\n.");
+    }
+
 //    public void onCreate(Bundle bundle) {
 //        super.onCreate(bundle);
 //        Log.d(TAG, "1st fragment onCreate");
