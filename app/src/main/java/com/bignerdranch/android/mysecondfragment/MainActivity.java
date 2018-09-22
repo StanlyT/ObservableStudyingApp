@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
+import java.util.concurrent.TimeUnit;
+
 public class MainActivity extends FragmentActivity {
     public static final String TAG = "#~";
 
@@ -26,19 +28,26 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d(TAG, "                                                                                                   HOST ACTIVITY onCreate");
+        Log.d(TAG, "                                   HOST ACTIVITY onCreate");
+
+        dosomething();
 
         startFirstActivity();
     }
 
+
+
+    public void dosomething(){
+
+    }
+
     public void startFirstActivity() {
-        Log.d(TAG, "startFirstActivity() called");
         Fragment fragment = fragmentManager.findFragmentByTag(TAG_FIRST_FRAGMENT);
         if (fragment == null) {
-            Log.d(TAG, "TAG_FIRST_FRAGMENT was not found");
             fragment = Fragment.instantiate(this, FIRST_FRAGMENT);
             fragmentManager.beginTransaction()
                     .replace(R.id.fragmentContainer, fragment, TAG_FIRST_FRAGMENT)
+                    .addToBackStack(BACK_STACK_ROOT_TAG)
                     .commit();
         } else {
             Log.d(TAG, "FIRST_FRAGMENT NOT null");
@@ -94,41 +103,48 @@ public class MainActivity extends FragmentActivity {
                 .commit();
     }
 
-    public void onTabSelected() {
-        // Pop off everything up to and including the current tab
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.popBackStack(BACK_STACK_ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-    }
-
-
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG, "                                                                                                  HOST ACTIVITY onStart");
+        Log.d(TAG, "                                   HOST ACTIVITY onStart");
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "                                                                                                   HOST ACTIVITY onResume");
+        Log.d(TAG, "                                   HOST ACTIVITY onResume");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG, "                                                                                                   HOST ACTIVITY onPause");
+        Log.d(TAG, "                                   HOST ACTIVITY onPause");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "                                   HOST ACTIVITY onRestart");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(TAG, "                                                                                                   HOST ACTIVITY onStop");
+        Log.d(TAG, "                                   HOST ACTIVITY onStop");
     }
+
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "                                                                                                   HOST ACTIVITY onDestroy");
+        Log.d(TAG, "                                   HOST ACTIVITY onDestroy");
     }
 }

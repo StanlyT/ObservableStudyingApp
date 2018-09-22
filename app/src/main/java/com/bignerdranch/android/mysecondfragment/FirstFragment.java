@@ -15,6 +15,12 @@ public class FirstFragment extends Fragment {
     private Button firstButton;
     private TextView firstTextView;
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Log.d(TAG, "1st fragment onViewCreated");
+    }
+
     public void onCreate(Bundle bundle){
         super.onCreate(bundle);
         Log.d(TAG, "1st fragment onCreate");
@@ -33,7 +39,6 @@ public class FirstFragment extends Fragment {
                 ((MainActivity)getActivity()).startSecondActivity();
             }
         });
-
         return v;
     }
 
@@ -52,7 +57,7 @@ public class FirstFragment extends Fragment {
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-//        Log.d(TAG, "1st fragment onViewStateRestored");
+        Log.d(TAG, "1st fragment onViewStateRestored");
     }
 
     @Override

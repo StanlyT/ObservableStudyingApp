@@ -37,7 +37,7 @@ public class SecondFragment extends Fragment{
         secondTextView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                ((MainActivity)getActivity()).deleteCurrentFragment(SecondFragment.this);
+//                ((MainActivity)getActivity()).deleteCurrentFragment(SecondFragment.this);
                 ((MainActivity)getActivity()).fragmentManager.popBackStack();            }
         });
 
@@ -60,8 +60,10 @@ public class SecondFragment extends Fragment{
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-//        Log.d(TAG, "                         2-nd fragment onViewStateRestored");
+        Log.d(TAG, "                         2-nd fragment onViewStateRestored");
     }
+
+
 
     @Override
     public void onStart() {
