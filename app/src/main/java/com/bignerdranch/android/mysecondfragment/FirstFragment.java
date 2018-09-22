@@ -1,8 +1,6 @@
 package com.bignerdranch.android.mysecondfragment;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,8 +16,6 @@ public class FirstFragment extends Fragment {
     public static final String TAG = "#~";
     private Button firstButton;
     private TextView firstTextView;
-    private Observable<String> observable;
-    private Observer<String> observer;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "1st fragment onCreateView");
@@ -37,29 +33,61 @@ public class FirstFragment extends Fragment {
             }
         });
 
-        startFirstExample();
+        createObservableWithFrom();
+
+        createObservableWithRange();
+
 
         Log.d(TAG, ".......................................................");
         return v;
     }
 
-    public void startFirstExample(){
+    private void createObservableWithFrom() {
         Log.d(TAG, "\n.");
-        observable = Observable.from(new String[]{"one", "two","three"});
-        observer = new Observer<String>() {
+
+        Observable<String> observable = Observable.from(new String[]{"one", "two", "three"});
+
+        Observer<String> observer = new Observer<String>() {
             @Override
             public void onNext(String s) {
-                Log.d(TAG,"onNext: " + s);
+                Log.d(TAG, "onNext: " + s);
             }
 
             @Override
             public void onError(Throwable e) {
-                Log.d(TAG,"onError: " + e);
+                Log.d(TAG, "onError: " + e);
             }
 
             @Override
             public void onCompleted() {
-                Log.d(TAG,"onCompleted");
+                Log.d(TAG, "onCompleted");
+            }
+        };
+
+        observable.subscribe(observer);
+
+        Log.d(TAG, "\n.");
+    }
+
+    private void createObservableWithRange() {
+        Log.d(TAG, "\n.");
+
+        Observable<Integer> observable = Observable.range(100, 10);
+
+        Observer<Integer> observer = new Observer<Integer>() {
+            @Override
+            public void onNext(Integer s) {
+                Log.d(TAG, "onNext: " + s);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, "onError: " + e);
+            }
+
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "onCompleted");
             }
         };
 
