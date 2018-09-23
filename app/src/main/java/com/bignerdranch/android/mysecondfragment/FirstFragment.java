@@ -52,12 +52,40 @@ public class FirstFragment extends Fragment {
 
 //        createObservableWithBuffer(4);
 
-        createObservableWithTaker(8);
+//        createObservableWithTaker(8);
+
+        createObservableWithSkip(10);
+
+
 
 
         Log.d(TAG, ".....................................end.of.onCreateView()...");
         return v;
     }
+
+    private void createObservableWithSkip(int count){
+        Observable<Integer> observable  = Observable
+                .from(new Integer[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16})
+                .skip(count);
+        Observer<Integer> observer = new Observer<Integer>(){
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, "onError: " + e);
+            }
+
+            @Override
+            public void onNext(Integer arg) {
+                Log.d(TAG, "onNext: " + arg);
+            }
+        };
+        observable.subscribe(observer);
+    }
+
 
     private void createObservableWithTaker(final int count){
         Observable<Integer> observable  = Observable
