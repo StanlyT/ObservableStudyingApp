@@ -63,13 +63,46 @@ public class FirstFragment extends Fragment {
 
 //        observableWithZip();
 
-        observableWithTakeUntil();
+//        observableWithTakeUntil();
+
+        observableWithAll();
 
 
         Log.d(TAG, ".....................................end.of.onCreateView()...");
         return v;
     }
 
+
+    private void observableWithAll() {
+        Func1<Integer, Boolean> lessThanTen = new Func1<Integer, Boolean>() {
+            @Override
+            public Boolean call(Integer i) {
+                return i < 10;
+            }
+        };
+
+        Observable<Boolean> observable = Observable
+                .from(new Integer[]{1, 2, 3, 4, 5, 6})
+                .all(lessThanTen);
+
+        Observer<Boolean> observer = new Observer<Boolean>() {
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, "onError: " + e);
+            }
+
+            @Override
+            public void onNext(Boolean arg) {
+                Log.d(TAG, "onNext: " + arg);
+            }
+        };
+        observable.subscribe(observer);
+    }
 
     private void observableWithTakeUntil() {
         Func1<Integer, Boolean> untilFour = new Func1<Integer, Boolean>() {
@@ -103,7 +136,7 @@ public class FirstFragment extends Fragment {
         observable.subscribe(observer);
     }
 
-    private void observableWithZip(){
+    private void observableWithZip() {
         Func2<Integer, String, String> func2 = new Func2<Integer, String, String>() {
             @Override
             public String call(Integer integer, String s) {
@@ -113,7 +146,7 @@ public class FirstFragment extends Fragment {
 
         Observable<String> observable = Observable
                 .from(new Integer[]{12, 7, 95, 34, 2})
-                .zipWith(Observable.from(new String[]{"B","K","E","T","CO"}), func2);
+                .zipWith(Observable.from(new String[]{"B", "K", "E", "T", "CO"}), func2);
 
         Observer<String> observer = new Observer<String>() {
             @Override
