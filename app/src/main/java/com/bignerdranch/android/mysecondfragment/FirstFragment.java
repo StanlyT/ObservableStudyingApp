@@ -50,11 +50,36 @@ public class FirstFragment extends Fragment {
 
 //        createObservableWithMap();
 
-        createObservableWithBuffer(4);
+//        createObservableWithBuffer(4);
+
+        createObservableWithTaker(8);
 
 
         Log.d(TAG, ".....................................end.of.onCreateView()...");
         return v;
+    }
+
+    private void createObservableWithTaker(final int count){
+        Observable<Integer> observable  = Observable
+                .from(new Integer[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16})
+                .take(count);
+        Observer<Integer> observer = new Observer<Integer>(){
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "onCompleted. There printed only "+count+" elements");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, "onError: " + e);
+            }
+
+            @Override
+            public void onNext(Integer arg) {
+                Log.d(TAG, "onNext: " + arg);
+            }
+        };
+        observable.subscribe(observer);
     }
 
     private void createObservableWithBuffer(int count){
