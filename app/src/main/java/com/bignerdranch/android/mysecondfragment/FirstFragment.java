@@ -56,15 +56,40 @@ public class FirstFragment extends Fragment {
 
 //        createObservableWithSkip(10);
 
-        observableWithFilter();
+//        observableWithFilter();
 
+        observableWithMerge();
 
 
         Log.d(TAG, ".....................................end.of.onCreateView()...");
         return v;
     }
 
-        private void observableWithFilter() {
+    private void observableWithMerge() {
+        Observable<Integer> observable = Observable
+                .from(new Integer[]{1, 2, 3, 4, 5})
+                .mergeWith(Observable.from(new Integer[]{6, 7, 8, 9, 10}));
+
+        Observer<Integer> observer = new Observer<Integer>() {
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, "onError: " + e);
+            }
+
+            @Override
+            public void onNext(Integer arg) {
+                Log.d(TAG, "onNext: " + arg);
+            }
+        };
+        observable.subscribe(observer);
+    }
+
+    private void observableWithFilter() {
         Func1<String, Boolean> func1 = new Func1<String, Boolean>() {
             @Override
             public Boolean call(String s) {
@@ -95,11 +120,11 @@ public class FirstFragment extends Fragment {
         observable.subscribe(observer);
     }
 
-    private void createObservableWithSkip(int count){
-        Observable<Integer> observable  = Observable
-                .from(new Integer[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16})
+    private void createObservableWithSkip(int count) {
+        Observable<Integer> observable = Observable
+                .from(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16})
                 .skip(count);
-        Observer<Integer> observer = new Observer<Integer>(){
+        Observer<Integer> observer = new Observer<Integer>() {
             @Override
             public void onCompleted() {
                 Log.d(TAG, "onCompleted");
@@ -118,15 +143,14 @@ public class FirstFragment extends Fragment {
         observable.subscribe(observer);
     }
 
-
-    private void createObservableWithTaker(final int count){
-        Observable<Integer> observable  = Observable
-                .from(new Integer[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16})
+    private void createObservableWithTaker(final int count) {
+        Observable<Integer> observable = Observable
+                .from(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16})
                 .take(count);
-        Observer<Integer> observer = new Observer<Integer>(){
+        Observer<Integer> observer = new Observer<Integer>() {
             @Override
             public void onCompleted() {
-                Log.d(TAG, "onCompleted. There printed only "+count+" elements");
+                Log.d(TAG, "onCompleted. There printed only " + count + " elements");
             }
 
             @Override
@@ -142,11 +166,11 @@ public class FirstFragment extends Fragment {
         observable.subscribe(observer);
     }
 
-    private void createObservableWithBuffer(int count){
-        Observable<List<Integer>> observable  = Observable
-                .from(new Integer[]{1,2,3,4,5,6,7,8,9,10})
+    private void createObservableWithBuffer(int count) {
+        Observable<List<Integer>> observable = Observable
+                .from(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
                 .buffer(count);
-        Observer<List<Integer>> observer = new Observer<List<Integer>>(){
+        Observer<List<Integer>> observer = new Observer<List<Integer>>() {
             @Override
             public void onCompleted() {
                 Log.d(TAG, "onCompleted");
@@ -177,7 +201,7 @@ public class FirstFragment extends Fragment {
                 .from(new String[]{"1", "2", "3", "4", "5", "6", "7"})
                 .map(stringToInteger);
 
-        Observer<Integer> observer = new Observer<Integer>(){
+        Observer<Integer> observer = new Observer<Integer>() {
             @Override
             public void onCompleted() {
                 Log.d(TAG, "onCompleted");
