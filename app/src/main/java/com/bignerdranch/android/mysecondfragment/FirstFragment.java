@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
@@ -47,12 +48,36 @@ public class FirstFragment extends Fragment {
 
 //        createObservableWithFromCallable();
 
-        createObservableWithMap();
+//        createObservableWithMap();
 
+        createObservableWithBuffer(4);
 
 
         Log.d(TAG, ".....................................end.of.onCreateView()...");
         return v;
+    }
+
+    private void createObservableWithBuffer(int count){
+        Observable<List<Integer>> observable  = Observable
+                .from(new Integer[]{1,2,3,4,5,6,7,8,9,10})
+                .buffer(count);
+        Observer<List<Integer>> observer = new Observer<List<Integer>>(){
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, "onError: " + e);
+            }
+
+            @Override
+            public void onNext(List<Integer> list) {
+                Log.d(TAG, "onNext: " + list);
+            }
+        };
+        observable.subscribe(observer);
     }
 
     private void createObservableWithMap() {
