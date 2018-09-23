@@ -54,13 +54,45 @@ public class FirstFragment extends Fragment {
 
 //        createObservableWithTaker(8);
 
-        createObservableWithSkip(10);
+//        createObservableWithSkip(10);
 
+        observableWithFilter();
 
 
 
         Log.d(TAG, ".....................................end.of.onCreateView()...");
         return v;
+    }
+
+        private void observableWithFilter() {
+        Func1<String, Boolean> func1 = new Func1<String, Boolean>() {
+            @Override
+            public Boolean call(String s) {
+                return s.contains("5");
+            }
+        };
+
+        Observable<String> observable = Observable
+                .from(new String[]{"11", "252", "33", "44", "555", "656"})
+                .filter(func1);
+
+        Observer<String> observer = new Observer<String>() {
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, "onError: " + e);
+            }
+
+            @Override
+            public void onNext(String arg) {
+                Log.d(TAG, "onNext: " + arg);
+            }
+        };
+        observable.subscribe(observer);
     }
 
     private void createObservableWithSkip(int count){
