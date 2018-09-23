@@ -13,6 +13,10 @@ import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 public class FirstFragment extends Fragment {
     public static final String TAG = "#~";
@@ -39,11 +43,47 @@ public class FirstFragment extends Fragment {
 
 //        createObservableWithRange();
 
-        createObservableWithInterval();
+//        createObservableWithInterval();
+
+//        createObservableWithFromCallable();
+
+        createObservableWithMap();
 
 
-        Log.d(TAG, ".......................................................");
+
+        Log.d(TAG, ".....................................end.of.onCreateView()...");
         return v;
+    }
+
+    private void createObservableWithMap() {
+        Func1<String, Integer> stringToInteger = new Func1<String, Integer>() {
+            @Override
+            public Integer call(String s) {
+                return Integer.parseInt(s);
+            }
+        };
+
+        Observable<Integer> observable = Observable
+                .from(new String[]{"1", "2", "3", "4", "5", "6", "7"})
+                .map(stringToInteger);
+
+        Observer<Integer> observer = new Observer<Integer>(){
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, "onError: " + e);
+            }
+
+            @Override
+            public void onNext(Integer arg) {
+                Log.d(TAG, "onNext: " + arg);
+            }
+        };
+        observable.subscribe(observer);
     }
 
     private void createObservableWithFrom() {
@@ -100,11 +140,11 @@ public class FirstFragment extends Fragment {
         Log.d(TAG, "\n.");
     }
 
-    public void createObservableWithInterval(){
+    public void createObservableWithInterval() {
         Log.d(TAG, "\n.");
 
-        Observable <Long> observable = Observable.interval(50, TimeUnit.MILLISECONDS);
-        Observer <Long> observer = new Observer<Long>(){
+        Observable<Long> observable = Observable.interval(50, TimeUnit.MILLISECONDS);
+        Observer<Long> observer = new Observer<Long>() {
             @Override
             public void onCompleted() {
                 Log.d(TAG, "onCompleted");
@@ -123,6 +163,22 @@ public class FirstFragment extends Fragment {
         observable.subscribe(observer);
         Log.d(TAG, "\n.");
     }
+
+    public void createObservableWithFromCallable() {
+        Log.d(TAG, "\n.");
+
+        Observable.fromCallable(new MyCallalbeClassWithLongOperation("5"))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer intArg) {
+                        Log.d(TAG, "call onNext " + intArg);
+                    }
+                });
+        Log.d(TAG, "\n.");
+    }
+
 
 //    public void onCreate(Bundle bundle) {
 //        super.onCreate(bundle);
