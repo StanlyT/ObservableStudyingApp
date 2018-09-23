@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.functions.Func2;
@@ -65,13 +66,26 @@ public class FirstFragment extends Fragment {
 
 //        observableWithTakeUntil();
 
-        observableWithAll();
+//        observableWithAll();
+
+        observableWithAction();
 
 
         Log.d(TAG, ".....................................end.of.onCreateView()...");
         return v;
     }
 
+    private void observableWithAction(){
+        Observable<String> observable = Observable.from(new String[]{"one", "two", "three"});
+        Action1<String> action = new Action1<String>(){
+            @Override
+            public void call(String s){
+                Log.d(TAG, "onNext: "+s);
+            }
+        };
+        observable.subscribe(action);
+
+    }
 
     private void observableWithAll() {
         Func1<Integer, Boolean> lessThanTen = new Func1<Integer, Boolean>() {
