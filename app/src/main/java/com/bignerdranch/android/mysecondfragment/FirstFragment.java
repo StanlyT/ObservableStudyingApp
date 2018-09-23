@@ -17,6 +17,7 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 
 public class FirstFragment extends Fragment {
@@ -58,11 +59,44 @@ public class FirstFragment extends Fragment {
 
 //        observableWithFilter();
 
-        observableWithMerge();
+//        observableWithMerge();
+
+        observableWithZip();
 
 
         Log.d(TAG, ".....................................end.of.onCreateView()...");
         return v;
+    }
+
+    private void observableWithZip(){
+        Func2<Integer, String, String> func2 = new Func2<Integer, String, String>() {
+            @Override
+            public String call(Integer integer, String s) {
+                return s + "-" + integer;
+            }
+        };
+
+        Observable<String> observable = Observable
+                .from(new Integer[]{12, 7, 95, 34, 2})
+                .zipWith(Observable.from(new String[]{"B","K","E","T","CO"}), func2);
+
+        Observer<String> observer = new Observer<String>() {
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, "onError: " + e);
+            }
+
+            @Override
+            public void onNext(String str) {
+                Log.d(TAG, "onNext: " + str);
+            }
+        };
+        observable.subscribe(observer);
     }
 
     private void observableWithMerge() {
