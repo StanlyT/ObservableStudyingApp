@@ -1,6 +1,7 @@
 package com.bignerdranch.android.mysecondfragment;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Observer;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action;
 import rx.functions.Action1;
@@ -68,11 +70,33 @@ public class FirstFragment extends Fragment {
 
 //        observableWithAll();
 
-        observableWithAction();
+//        observableWithAction();
+
+        observableWithSubscription();
 
 
         Log.d(TAG, ".....................................end.of.onCreateView()...");
         return v;
+    }
+
+    private void observableWithSubscription(){
+        Observable<Long> observable = Observable
+                .interval(1, TimeUnit.SECONDS);
+        Action1<Long> action = new Action1<Long>() {
+            @Override
+            public void call(Long aLong) {
+                Log.d(TAG, "onNext :: "+aLong);
+            }
+        };
+
+        final Subscription subscription = observable.subscribe(action);
+
+        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                subscription.unsubscribe();
+            }
+        }, 3000);
     }
 
     private void observableWithAction(){
@@ -393,7 +417,7 @@ public class FirstFragment extends Fragment {
     public void createObservableWithInterval() {
         Log.d(TAG, "\n.");
 
-        Observable<Long> observable = Observable.interval(50, TimeUnit.MILLISECONDS);
+        Observable<Long> observable = Observable.interval(1, TimeUnit.SECONDS);
         Observer<Long> observer = new Observer<Long>() {
             @Override
             public void onCompleted() {

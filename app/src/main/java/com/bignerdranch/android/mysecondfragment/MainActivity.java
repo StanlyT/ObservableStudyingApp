@@ -8,6 +8,10 @@ import android.util.Log;
 
 import java.util.concurrent.TimeUnit;
 
+import rx.Observable;
+import rx.Subscription;
+import rx.functions.Action1;
+
 public class MainActivity extends FragmentActivity {
     public static final String TAG = "#~";
 
@@ -30,15 +34,29 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         Log.d(TAG, "                                   HOST ACTIVITY onCreate");
 
-        dosomething();
-
         startFirstActivity();
+
+//        observableWithSubscription();
     }
 
+    private void observableWithSubscription(){
+        Observable<Long> observable = Observable
+                .interval(1, TimeUnit.SECONDS);
+        Action1<Long> action = new Action1<Long>() {
+            @Override
+            public void call(Long aLong) {
+                Log.d(TAG, "onNext :: "+aLong);
+            }
+        };
 
+        final Subscription subscription = observable.subscribe(action);
 
-    public void dosomething(){
-
+        getWindow().getDecorView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                subscription.unsubscribe();
+            }
+        }, 3000);
     }
 
     public void startFirstActivity() {
