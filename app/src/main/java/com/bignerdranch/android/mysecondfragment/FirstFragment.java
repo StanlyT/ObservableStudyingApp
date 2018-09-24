@@ -21,6 +21,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.functions.Func2;
+import rx.observables.ConnectableObservable;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
@@ -81,13 +82,126 @@ public class FirstFragment extends Fragment {
 
 //        callSecondCustomObservable();
 
-        callThirdCustomObservableExample();
+//        callColdObservableExample();
+
+//        callHotObservableExample();
+
+        callObservableWithReplay();
 
         Log.d(TAG, ".....................................end.of.onCreateView()...");
         return v;
     }
+
+    private void callObservableWithReplay() {
+        final Observer<Long> observer1 = new Observer<Long>() {
+            @Override
+            public void onCompleted() {
+                Log.d(TAG,"observer1 onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {}
+
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG,"observer1 onNext value = " + aLong);
+            }
+        };
+
+        final Observer<Long> observer2 = new Observer<Long>() {
+            @Override
+            public void onCompleted() {
+                Log.d(TAG,"observer2 onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {}
+
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG,"observer2 onNext value = " + aLong);
+            }
+        };
+
+        final ConnectableObservable<Long> observable = Observable
+                .interval(1, TimeUnit.SECONDS)
+                .take(6)
+                .replay();
+
+        Log.d(TAG,"observable connect");
+        observable.connect();
+
+        Handler handler2 = new Handler();
+        handler2.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG,"observer1 subscribe");
+                observable.subscribe(observer1);
+            }
+        }, 2500);
+
+        Handler handler1 = new Handler();
+        handler1.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG,"observer2 subscribe");
+                observable.subscribe(observer2);
+            }
+        }, 10000);
+    }
     
-    private void callThirdCustomObservableExample() {
+    private void callHotObservableExample() {
+        final Observer<Long> observer1 = new Observer<Long>(){
+            @Override
+            public void onCompleted() {
+                Log.d(TAG,"1 observer onCompleted");
+            }
+            @Override
+            public void onError(Throwable e) {}
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG,"1 observer onNext value     |" + aLong +  "|");
+            }
+        };
+
+        final Observer<Long> observer2 = new Observer<Long>(){
+            @Override
+            public void onCompleted() {
+                Log.d(TAG,"  2 observer onCompleted");
+            }
+            @Override
+            public void onError(Throwable e) {}
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG,"  2 observer onNext value          |" + aLong +  "|");
+            }
+        };
+        final ConnectableObservable<Long> observable = Observable
+                .interval(1, TimeUnit.SECONDS)
+                .take(8)
+                .publish();
+
+         Log.d(TAG, "obsrvable connect");
+         observable.connect();
+
+        Handler handler1 = new Handler();
+        handler1.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                observable.subscribe(observer1);
+            }
+        }, 2500);
+
+        Handler handler2 = new Handler();
+        handler2.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                observable.subscribe(observer2);
+            }
+        }, 4500);
+    }
+
+    private void callColdObservableExample() {
         final Observer<Long> observer1 = new Observer<Long>(){
             @Override
             public void onCompleted() {
