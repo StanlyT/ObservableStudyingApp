@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -73,11 +74,51 @@ public class FirstFragment extends Fragment {
 
 //        observableWithSubscription();
 
-        observableWithCompositeSubscription();
+//        observableWithCompositeSubscription();
 
+        callFirstCustomObservable();
 
         Log.d(TAG, ".....................................end.of.onCreateView()...");
         return v;
+    }
+
+    private void callFirstCustomObservable() {
+        Observable.OnSubscribe<Integer> onSubscribe = new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                for (int i = 0; i < 10; i++) {
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    subscriber.onNext(i);
+                }
+                subscriber.onCompleted();
+            }
+        };
+        // create observable
+        Observable<Integer> observable = Observable.create(onSubscribe)
+                .subscribeOn(Schedulers.io());
+        // create observer
+        Observer<Integer> observer = new Observer<Integer>() {
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, "onError: " + e);
+            }
+
+            @Override
+            public void onNext(Integer arg) {
+                Log.d(TAG, "onNext: " + arg);
+            }
+        };
+
+        observable.subscribe(observer);
     }
 
     private void observableWithCompositeSubscription() {
@@ -108,15 +149,15 @@ public class FirstFragment extends Fragment {
         compositeSubscription.add(subscription1);
         compositeSubscription.add(subscription2);
 
-        Log.d(TAG,"subscription1 is unsubscribed " + subscription1.isUnsubscribed());
-        Log.d(TAG,"subscription2 is unsubscribed " + subscription2.isUnsubscribed());
+        Log.d(TAG, "subscription1 is unsubscribed " + subscription1.isUnsubscribed());
+        Log.d(TAG, "subscription2 is unsubscribed " + subscription2.isUnsubscribed());
 
         // unsubscribe CompositeSubscription
-        Log.d(TAG,"unsubscribe CompositeSubscription");
+        Log.d(TAG, "unsubscribe CompositeSubscription");
         compositeSubscription.unsubscribe();
 
-        Log.d(TAG,"subscription1 is unsubscribed " + subscription1.isUnsubscribed());
-        Log.d(TAG,"subscription2 is unsubscribed " + subscription2.isUnsubscribed());
+        Log.d(TAG, "subscription1 is unsubscribed " + subscription1.isUnsubscribed());
+        Log.d(TAG, "subscription2 is unsubscribed " + subscription2.isUnsubscribed());
 
     }
 
