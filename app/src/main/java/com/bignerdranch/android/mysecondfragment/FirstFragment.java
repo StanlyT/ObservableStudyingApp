@@ -79,10 +79,59 @@ public class FirstFragment extends Fragment {
 
 //        callFirstCustomObservable();
 
-        callSecondCustomObservable();
+//        callSecondCustomObservable();
+
+        callThirdCustomObservableExample();
 
         Log.d(TAG, ".....................................end.of.onCreateView()...");
         return v;
+    }
+    
+    private void callThirdCustomObservableExample() {
+        final Observer<Long> observer1 = new Observer<Long>(){
+            @Override
+            public void onCompleted() {
+                Log.d(TAG,"1 observer onCompleted");
+            }
+            @Override
+            public void onError(Throwable e) {}
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG,"1 observer onNext value     |" + aLong +  "|");
+            }
+        };
+
+        final Observer<Long> observer2 = new Observer<Long>(){
+            @Override
+            public void onCompleted() {
+                Log.d(TAG,"  2 observer onCompleted");
+            }
+            @Override
+            public void onError(Throwable e) {}
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG,"  2 observer onNext value          |" + aLong +  "|");
+            }
+        };
+        final Observable<Long> observable = Observable
+                .interval(1, TimeUnit.SECONDS)
+                .take(6);
+
+        Handler handler1 = new Handler();
+        handler1.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                observable.subscribe(observer1);
+            }
+        }, 5000);
+
+        Handler handler2 = new Handler();
+        handler2.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                observable.subscribe(observer2);
+            }
+        }, 8500);
     }
 
     private void callSecondCustomObservable() {
@@ -139,7 +188,7 @@ public class FirstFragment extends Fragment {
             public void run() {
                 subscription.unsubscribe();
             }
-        }, 8000);
+        }, 2000);
     }
 
     private void callFirstCustomObservable() {
