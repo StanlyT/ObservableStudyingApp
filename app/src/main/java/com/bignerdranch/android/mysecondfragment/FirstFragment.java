@@ -1,7 +1,6 @@
 package com.bignerdranch.android.mysecondfragment;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,11 +16,11 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.functions.Func2;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 public class FirstFragment extends Fragment {
     public static final String TAG = "#~";
@@ -72,20 +71,62 @@ public class FirstFragment extends Fragment {
 
 //        observableWithAction();
 
-        observableWithSubscription();
+//        observableWithSubscription();
+
+        observableWithCompositeSubscription();
 
 
         Log.d(TAG, ".....................................end.of.onCreateView()...");
         return v;
     }
 
-    private void observableWithSubscription(){
+    private void observableWithCompositeSubscription() {
+        final Subscription subscription1;
+        final Subscription subscription2;
+
+        final Observable<Long> observable = Observable
+                .interval(1, TimeUnit.SECONDS);
+
+        Action1<Long> actionObserver1 = new Action1<Long>() {
+            @Override
+            public void call(Long aLong) {
+                Log.d(TAG, "1-st Observer. onNest: " + aLong);
+            }
+        };
+
+        Action1<Long> actionObserver2 = new Action1<Long>() {
+            @Override
+            public void call(Long aLong) {
+                Log.d(TAG, "2nd Observer. onNest: " + aLong);
+            }
+        };
+
+        subscription1 = observable.subscribe(actionObserver1);
+        subscription2 = observable.subscribe(actionObserver2);
+
+        CompositeSubscription compositeSubscription = new CompositeSubscription();
+        compositeSubscription.add(subscription1);
+        compositeSubscription.add(subscription2);
+
+        Log.d(TAG,"subscription1 is unsubscribed " + subscription1.isUnsubscribed());
+        Log.d(TAG,"subscription2 is unsubscribed " + subscription2.isUnsubscribed());
+
+        // unsubscribe CompositeSubscription
+        Log.d(TAG,"unsubscribe CompositeSubscription");
+        compositeSubscription.unsubscribe();
+
+        Log.d(TAG,"subscription1 is unsubscribed " + subscription1.isUnsubscribed());
+        Log.d(TAG,"subscription2 is unsubscribed " + subscription2.isUnsubscribed());
+
+    }
+
+    private void observableWithSubscription() {
         Observable<Long> observable = Observable
                 .interval(1, TimeUnit.SECONDS);
         Action1<Long> action = new Action1<Long>() {
             @Override
             public void call(Long aLong) {
-                Log.d(TAG, "onNext :: "+aLong);
+                Log.d(TAG, "onNext :: " + aLong);
             }
         };
 
@@ -99,12 +140,12 @@ public class FirstFragment extends Fragment {
         }, 3000);
     }
 
-    private void observableWithAction(){
+    private void observableWithAction() {
         Observable<String> observable = Observable.from(new String[]{"one", "two", "three"});
-        Action1<String> action = new Action1<String>(){
+        Action1<String> action = new Action1<String>() {
             @Override
-            public void call(String s){
-                Log.d(TAG, "onNext: "+s);
+            public void call(String s) {
+                Log.d(TAG, "onNext: " + s);
             }
         };
         observable.subscribe(action);
