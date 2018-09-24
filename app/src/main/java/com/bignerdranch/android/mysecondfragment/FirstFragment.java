@@ -1,6 +1,7 @@
 package com.bignerdranch.android.mysecondfragment;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -76,10 +77,69 @@ public class FirstFragment extends Fragment {
 
 //        observableWithCompositeSubscription();
 
-        callFirstCustomObservable();
+//        callFirstCustomObservable();
+
+        callSecondCustomObservable();
 
         Log.d(TAG, ".....................................end.of.onCreateView()...");
         return v;
+    }
+
+    private void callSecondCustomObservable() {
+        Observable.OnSubscribe<Integer> onSubscribe = new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                for (int i = 0; i < 10; i++) {
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (subscriber.isUnsubscribed()){ // ! 1 !
+                        return;
+                    }
+                    subscriber.onNext(i);
+                }
+
+                if (subscriber.isUnsubscribed()){     // ! 2 !
+                    return;
+                }
+
+                subscriber.onCompleted();
+            }
+        };
+
+        Observable <Integer> observable = Observable
+                .create(onSubscribe)
+                .subscribeOn(Schedulers.io());
+
+        // create observer
+        Observer<Integer> observer = new Observer<Integer>() {
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, "onError: " + e);
+            }
+
+            @Override
+            public void onNext(Integer arg) {
+                Log.d(TAG, "onNext: " + arg);
+            }
+        };
+
+        final Subscription subscription = observable.subscribe(observer);
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                subscription.unsubscribe();
+            }
+        }, 8000);
     }
 
     private void callFirstCustomObservable() {
