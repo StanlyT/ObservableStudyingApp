@@ -86,6 +86,8 @@ public class FirstFragment extends Fragment {
 
 //        callHotObservableExample();
 
+//        callObservableWithReplay();
+
         callObservableWithReplay();
 
         Log.d(TAG, ".....................................end.of.onCreateView()...");
@@ -104,7 +106,7 @@ public class FirstFragment extends Fragment {
 
             @Override
             public void onNext(Long aLong) {
-                Log.d(TAG,"observer1 onNext value = " + aLong);
+                Log.d(TAG,"observer1 onNext value     |" + aLong +  "|");
             }
         };
 
@@ -119,20 +121,20 @@ public class FirstFragment extends Fragment {
 
             @Override
             public void onNext(Long aLong) {
-                Log.d(TAG,"observer2 onNext value = " + aLong);
+                Log.d(TAG,"observer2 onNext value              |" + aLong +  "|");
             }
         };
 
         final ConnectableObservable<Long> observable = Observable
                 .interval(1, TimeUnit.SECONDS)
-                .take(6)
+                .take(50)
                 .replay();
 
         Log.d(TAG,"observable connect");
-        observable.connect();
+        final Subscription subscription = observable.connect();
 
-        Handler handler2 = new Handler();
-        handler2.postDelayed(new Runnable() {
+        Handler handler1 = new Handler();
+        handler1.postDelayed(new Runnable() {
             @Override
             public void run() {
                 Log.d(TAG,"observer1 subscribe");
@@ -140,14 +142,24 @@ public class FirstFragment extends Fragment {
             }
         }, 2500);
 
-        Handler handler1 = new Handler();
-        handler1.postDelayed(new Runnable() {
+        Handler handler2 = new Handler();
+        handler2.postDelayed(new Runnable() {
             @Override
             public void run() {
                 Log.d(TAG,"observer2 subscribe");
                 observable.subscribe(observer2);
             }
-        }, 10000);
+        }, 13000);
+
+        Handler handler3 = new Handler();
+        handler3.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "subscription.unsubscribe()");
+                subscription.unsubscribe();
+                Log.d(TAG, "subscription.isUnsubscribed() "+ subscription.isUnsubscribed());
+            }
+        }, 20000);
     }
     
     private void callHotObservableExample() {
