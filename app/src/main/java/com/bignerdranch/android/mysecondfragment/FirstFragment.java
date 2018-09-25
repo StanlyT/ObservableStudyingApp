@@ -24,6 +24,7 @@ import rx.functions.Func2;
 import rx.observables.ConnectableObservable;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
+import rx.subjects.ReplaySubject;
 import rx.subscriptions.CompositeSubscription;
 
 public class FirstFragment extends Fragment {
@@ -101,13 +102,81 @@ public class FirstFragment extends Fragment {
 
 //        callCacheExample();
 
-        callSubjectExample();
+//        callPublishSubjectExample();
+
+        callReplaySubjectExample();
 
         log(".....................................end.of.onCreateView()...");
         return v;
     }
 
-    private void callSubjectExample() {
+    private void callReplaySubjectExample() {
+        final Observer<Long> observer1 = new Observer<Long>() {
+            @Override
+            public void onCompleted() {
+                log("1 observer_________________onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+            }
+
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG, "1 observer onNext  value        |" + aLong + "|");
+            }
+        };
+
+        final Observer<Long> observer2 = new Observer<Long>() {
+            @Override
+            public void onCompleted() {
+                log("2 observer_________________onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+            }
+
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG, "    2 observer onNext value             |" + aLong + "|");
+            }
+        };
+
+        final Observable<Long> observable = Observable
+                .interval(1, TimeUnit.SECONDS)
+                .take(10);
+
+        final ReplaySubject<Long> subject = ReplaySubject.create();     log("subscribe subject");
+        observable.subscribe(subject);
+
+        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                log("1 observer subscribe");
+                subject.subscribe(observer1);
+            }
+        }, 3500);
+
+        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                log("2 observer subscribe");
+                subject.subscribe(observer2);
+            }
+        }, 5500);
+
+        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                log("subject onNext ");
+                subject.onNext(100L);
+            }
+        }, 7500);
+    }
+
+
+    private void callPublishSubjectExample() {
         final Observer<Long> observer1 = new Observer<Long>() {
             @Override
             public void onCompleted() {
