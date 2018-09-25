@@ -13,7 +13,7 @@ import rx.Subscription;
 import rx.functions.Action1;
 
 public class MainActivity extends FragmentActivity {
-    public static final String TAG = "#~";
+    public static final String TAG = "$$";
 
     FragmentManager fragmentManager = getSupportFragmentManager();
     public static final String TAG_FIRST_FRAGMENT = "FIRST_FRAGMENT_TAG";

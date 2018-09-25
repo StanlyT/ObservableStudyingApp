@@ -23,6 +23,7 @@ import rx.functions.Func1;
 import rx.functions.Func2;
 import rx.observables.ConnectableObservable;
 import rx.schedulers.Schedulers;
+import rx.subjects.BehaviorSubject;
 import rx.subjects.PublishSubject;
 import rx.subjects.ReplaySubject;
 import rx.subscriptions.CompositeSubscription;
@@ -33,10 +34,6 @@ public class FirstFragment extends Fragment {
     private TextView firstTextView;
     Subscription subscriptionRef1;
     Subscription subscriptionRef2;
-
-    private void log(String d) {
-        Log.d(TAG, d);
-    }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         log("1st fragment onCreateView");
@@ -104,10 +101,71 @@ public class FirstFragment extends Fragment {
 
 //        callPublishSubjectExample();
 
-        callReplaySubjectExample();
+//        callReplaySubjectExample();
 
-        log(".....................................end.of.onCreateView()...");
+        callBehaviorSubjectExample();
+
+//        log(".....................................end.of.onCreateView()...");
         return v;
+    }
+
+    private void callBehaviorSubjectExample() {
+        final Observer<Long> observer1 = new Observer<Long>() {
+            @Override
+            public void onCompleted() {
+                log("1 observer_________________onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+            }
+
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG, "1 observer onNext  value        |" + aLong + "|");
+            }
+        };
+
+        final Observer<Long> observer2 = new Observer<Long>() {
+            @Override
+            public void onCompleted() {
+                log("2 observer_________________onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+            }
+
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG, "    2 observer onNext value             |" + aLong + "|");
+            }
+        };
+
+        final Observable<Long> observable = Observable
+                .interval(1, TimeUnit.SECONDS)
+                .take(10);
+
+        final BehaviorSubject<Long> subject = BehaviorSubject.create(-1L);
+
+        log("1 observer subscribe");
+        subject.subscribe(observer1);
+
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                log("subject subscribe");
+                observable.subscribe(subject);
+            }
+        }, 2000);
+
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                log("2 observer subscribe");
+                subject.subscribe(observer2);
+            }
+        }, 7500);
     }
 
     private void callReplaySubjectExample() {
@@ -1098,7 +1156,13 @@ public class FirstFragment extends Fragment {
         Log.d(TAG, "\n.");
     }
 
+    private void log(String d) {
+        Log.d(TAG, d);
+    }
 
+    private void postDelayed(Runnable runnable, long ms) {
+        getActivity().getWindow().getDecorView().postDelayed(runnable, ms);
+    }
 //    public void onCreate(Bundle bundle) {
 //        super.onCreate(bundle);
 //        Log.d(TAG, "1st fragment onCreate");
