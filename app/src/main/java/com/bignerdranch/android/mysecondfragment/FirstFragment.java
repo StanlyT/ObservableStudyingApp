@@ -23,6 +23,7 @@ import rx.functions.Func1;
 import rx.functions.Func2;
 import rx.observables.ConnectableObservable;
 import rx.schedulers.Schedulers;
+import rx.subjects.AsyncSubject;
 import rx.subjects.BehaviorSubject;
 import rx.subjects.PublishSubject;
 import rx.subjects.ReplaySubject;
@@ -103,10 +104,67 @@ public class FirstFragment extends Fragment {
 
 //        callReplaySubjectExample();
 
-        callBehaviorSubjectExample();
+//        callBehaviorSubjectExample();
+
+        callAsyncSubjectExample();
 
 //        log(".....................................end.of.onCreateView()...");
         return v;
+    }
+
+    private void callAsyncSubjectExample() {
+        final Observer<Long> observer1 = new Observer<Long>() {
+            @Override
+            public void onCompleted() {
+                log("1 observer_________________onCompleted");
+            }
+            @Override
+            public void onError(Throwable e) {
+            }
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG, "1 observer onNext  value        |" + aLong + "|");
+            }
+        };
+
+        final Observer<Long> observer2 = new Observer<Long>() {
+            @Override
+            public void onCompleted() {
+                log("2 observer_________________onCompleted");
+            }
+            @Override
+            public void onError(Throwable e) {
+            }
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG, "    2 observer onNext value             |" + aLong + "|");
+            }
+        };
+
+        final Observable<Long> observable = Observable
+                .interval(1, TimeUnit.SECONDS)
+                .take(4);
+
+        final AsyncSubject<Long> subject = AsyncSubject.create();
+
+        log("subject subscribe");
+        observable.subscribe(subject);
+
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                log("1 observer subscribe");
+                subject.subscribe(observer1);
+            }
+        }, 4000);
+
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                log("   2 observer subscribe");
+                subject.subscribe(observer2);
+            }
+        }, 7500);
     }
 
     private void callBehaviorSubjectExample() {
