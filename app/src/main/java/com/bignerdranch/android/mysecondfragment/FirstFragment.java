@@ -29,6 +29,8 @@ public class FirstFragment extends Fragment {
     public static final String TAG = "#~";
     private Button firstButton;
     private TextView firstTextView;
+    Subscription subscriptionRef1;
+    Subscription subscriptionRef2;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.d(TAG, "1st fragment onCreateView");
@@ -88,10 +90,92 @@ public class FirstFragment extends Fragment {
 
 //        callObservableWithReplay();
 
-        callObservableWithReplay();
+//        callObservableWithReplay();
+
+        callRefCountExample();
 
         Log.d(TAG, ".....................................end.of.onCreateView()...");
         return v;
+    }
+
+    private void callRefCountExample() {
+
+        final Observer<Long> observer1 = new Observer<Long> (){
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "1 observer_________________onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {}
+
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG, "1 observer onNext  value  |" + aLong + "|");
+            }
+        };
+
+        final Observer<Long> observer2 = new Observer<Long> (){
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "2 observer_________________onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {}
+
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG, "    2 observer onNext value         |" + aLong + "|");
+            }
+        };
+
+        final Observable<Long> observable = Observable
+                .interval(1, TimeUnit.SECONDS)
+                .take(7)
+                .publish()
+                .refCount();
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "1 observer subscribed");
+                subscriptionRef1 = observable.subscribe(observer1);
+            }
+        }, 1500);
+
+        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "2 observer subscribed");
+                subscriptionRef2 = observable.subscribe(observer2);
+            }
+        }, 3000);
+
+        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "XXX 1 observer XXX unsubscribe");
+                subscriptionRef1.unsubscribe();
+            }
+        }, 5000);
+
+        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "XXX 2 observer XXX unsubscribe");
+                subscriptionRef2.unsubscribe();
+            }
+        }, 6000);
+
+        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "AGAIN 1 observer subscribe");
+                observable.subscribe(observer1);
+            }
+        }, 6500);
     }
 
     private void callObservableWithReplay() {
@@ -188,6 +272,7 @@ public class FirstFragment extends Fragment {
                 Log.d(TAG,"  2 observer onNext value          |" + aLong +  "|");
             }
         };
+
         final ConnectableObservable<Long> observable = Observable
                 .interval(1, TimeUnit.SECONDS)
                 .take(8)
