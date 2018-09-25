@@ -60,7 +60,7 @@ public class FourthFragment extends Fragment{
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-//        Log.d(TAG, "                                                                             4-th fragment onViewStateRestored");
+//        Log.d(D, "                                                                             4-th fragment onViewStateRestored");
     }
 
     @Override

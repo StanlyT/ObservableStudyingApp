@@ -23,6 +23,7 @@ import rx.functions.Func1;
 import rx.functions.Func2;
 import rx.observables.ConnectableObservable;
 import rx.schedulers.Schedulers;
+import rx.subjects.PublishSubject;
 import rx.subscriptions.CompositeSubscription;
 
 public class FirstFragment extends Fragment {
@@ -32,9 +33,13 @@ public class FirstFragment extends Fragment {
     Subscription subscriptionRef1;
     Subscription subscriptionRef2;
 
+    private void log(String d) {
+        Log.d(TAG, d);
+    }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Log.d(TAG, "1st fragment onCreateView");
-        Log.d(TAG, ".......................................................");
+        log("1st fragment onCreateView");
+        log(".......................................................");
 
         View v = inflater.inflate(R.layout.first_fragment_layout, container, false);
         firstButton = (Button) v.findViewById(R.id.first_button);
@@ -94,23 +99,24 @@ public class FirstFragment extends Fragment {
 
 //        callRefCountExample();
 
-        callCacheExample();
+//        callCacheExample();
 
-        Log.d(TAG, ".....................................end.of.onCreateView()...");
+        callSubjectExample();
+
+        log(".....................................end.of.onCreateView()...");
         return v;
     }
 
-
-    private void callCacheExample() {
-
-        final Observer<Long> observer1 = new Observer<Long> (){
+    private void callSubjectExample() {
+        final Observer<Long> observer1 = new Observer<Long>() {
             @Override
             public void onCompleted() {
-                Log.d(TAG, "1 observer_________________onCompleted");
+                log("1 observer_________________onCompleted");
             }
 
             @Override
-            public void onError(Throwable e) {}
+            public void onError(Throwable e) {
+            }
 
             @Override
             public void onNext(Long aLong) {
@@ -118,14 +124,82 @@ public class FirstFragment extends Fragment {
             }
         };
 
-        final Observer<Long> observer2 = new Observer<Long> (){
+        final Observer<Long> observer2 = new Observer<Long>() {
+            @Override
+            public void onCompleted() {
+                log("2 observer_________________onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+            }
+
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG, "    2 observer onNext value             |" + aLong + "|");
+            }
+        };
+
+        final Observable<Long> observable = Observable
+                .interval(1, TimeUnit.SECONDS)
+                .take(10);
+
+        final PublishSubject<Long> subject = PublishSubject.create();     log("subscribe subject");
+        observable.subscribe(subject);
+
+        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                log("1 observer subscribe");
+                subject.subscribe(observer1);
+            }
+        }, 3500);
+
+        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                log("2 observer subscribe");
+                subject.subscribe(observer2);
+            }
+        }, 5500);
+
+        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                log("subject onNext ");
+                subject.onNext(100L);
+            }
+        }, 7500);
+    }
+
+
+    private void callCacheExample() {
+
+        final Observer<Long> observer1 = new Observer<Long>() {
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "1 observer_________________onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+            }
+
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG, "1 observer onNext  value        |" + aLong + "|");
+            }
+        };
+
+        final Observer<Long> observer2 = new Observer<Long>() {
             @Override
             public void onCompleted() {
                 Log.d(TAG, "2 observer_________________onCompleted");
             }
 
             @Override
-            public void onError(Throwable e) {}
+            public void onError(Throwable e) {
+            }
 
             @Override
             public void onNext(Long aLong) {
@@ -184,14 +258,15 @@ public class FirstFragment extends Fragment {
 
     private void callRefCountExample() {
 
-        final Observer<Long> observer1 = new Observer<Long> (){
+        final Observer<Long> observer1 = new Observer<Long>() {
             @Override
             public void onCompleted() {
                 Log.d(TAG, "1 observer_________________onCompleted");
             }
 
             @Override
-            public void onError(Throwable e) {}
+            public void onError(Throwable e) {
+            }
 
             @Override
             public void onNext(Long aLong) {
@@ -199,14 +274,15 @@ public class FirstFragment extends Fragment {
             }
         };
 
-        final Observer<Long> observer2 = new Observer<Long> (){
+        final Observer<Long> observer2 = new Observer<Long>() {
             @Override
             public void onCompleted() {
                 Log.d(TAG, "2 observer_________________onCompleted");
             }
 
             @Override
-            public void onError(Throwable e) {}
+            public void onError(Throwable e) {
+            }
 
             @Override
             public void onNext(Long aLong) {
@@ -266,30 +342,32 @@ public class FirstFragment extends Fragment {
         final Observer<Long> observer1 = new Observer<Long>() {
             @Override
             public void onCompleted() {
-                Log.d(TAG,"observer1 onCompleted");
+                Log.d(TAG, "observer1 onCompleted");
             }
 
             @Override
-            public void onError(Throwable e) {}
+            public void onError(Throwable e) {
+            }
 
             @Override
             public void onNext(Long aLong) {
-                Log.d(TAG,"observer1 onNext value     |" + aLong +  "|");
+                Log.d(TAG, "observer1 onNext value     |" + aLong + "|");
             }
         };
 
         final Observer<Long> observer2 = new Observer<Long>() {
             @Override
             public void onCompleted() {
-                Log.d(TAG,"observer2 onCompleted");
+                Log.d(TAG, "observer2 onCompleted");
             }
 
             @Override
-            public void onError(Throwable e) {}
+            public void onError(Throwable e) {
+            }
 
             @Override
             public void onNext(Long aLong) {
-                Log.d(TAG,"observer2 onNext value              |" + aLong +  "|");
+                Log.d(TAG, "observer2 onNext value              |" + aLong + "|");
             }
         };
 
@@ -298,14 +376,14 @@ public class FirstFragment extends Fragment {
                 .take(50)
                 .replay();
 
-        Log.d(TAG,"observable connect");
+        Log.d(TAG, "observable connect");
         final Subscription subscription = observable.connect();
 
         Handler handler1 = new Handler();
         handler1.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG,"observer1 subscribe");
+                Log.d(TAG, "observer1 subscribe");
                 observable.subscribe(observer1);
             }
         }, 2500);
@@ -314,7 +392,7 @@ public class FirstFragment extends Fragment {
         handler2.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG,"observer2 subscribe");
+                Log.d(TAG, "observer2 subscribe");
                 observable.subscribe(observer2);
             }
         }, 13000);
@@ -325,35 +403,41 @@ public class FirstFragment extends Fragment {
             public void run() {
                 Log.d(TAG, "subscription.unsubscribe()");
                 subscription.unsubscribe();
-                Log.d(TAG, "subscription.isUnsubscribed() "+ subscription.isUnsubscribed());
+                Log.d(TAG, "subscription.isUnsubscribed() " + subscription.isUnsubscribed());
             }
         }, 20000);
     }
-    
+
     private void callHotObservableExample() {
-        final Observer<Long> observer1 = new Observer<Long>(){
+        final Observer<Long> observer1 = new Observer<Long>() {
             @Override
             public void onCompleted() {
-                Log.d(TAG,"1 observer onCompleted");
+                Log.d(TAG, "1 observer onCompleted");
             }
+
             @Override
-            public void onError(Throwable e) {}
+            public void onError(Throwable e) {
+            }
+
             @Override
             public void onNext(Long aLong) {
-                Log.d(TAG,"1 observer onNext value     |" + aLong +  "|");
+                Log.d(TAG, "1 observer onNext value     |" + aLong + "|");
             }
         };
 
-        final Observer<Long> observer2 = new Observer<Long>(){
+        final Observer<Long> observer2 = new Observer<Long>() {
             @Override
             public void onCompleted() {
-                Log.d(TAG,"  2 observer onCompleted");
+                Log.d(TAG, "  2 observer onCompleted");
             }
+
             @Override
-            public void onError(Throwable e) {}
+            public void onError(Throwable e) {
+            }
+
             @Override
             public void onNext(Long aLong) {
-                Log.d(TAG,"  2 observer onNext value          |" + aLong +  "|");
+                Log.d(TAG, "  2 observer onNext value          |" + aLong + "|");
             }
         };
 
@@ -362,8 +446,8 @@ public class FirstFragment extends Fragment {
                 .take(8)
                 .publish();
 
-         Log.d(TAG, "obsrvable connect");
-         observable.connect();
+        Log.d(TAG, "obsrvable connect");
+        observable.connect();
 
         Handler handler1 = new Handler();
         handler1.postDelayed(new Runnable() {
@@ -383,29 +467,35 @@ public class FirstFragment extends Fragment {
     }
 
     private void callColdObservableExample() {
-        final Observer<Long> observer1 = new Observer<Long>(){
+        final Observer<Long> observer1 = new Observer<Long>() {
             @Override
             public void onCompleted() {
-                Log.d(TAG,"1 observer onCompleted");
+                Log.d(TAG, "1 observer onCompleted");
             }
+
             @Override
-            public void onError(Throwable e) {}
+            public void onError(Throwable e) {
+            }
+
             @Override
             public void onNext(Long aLong) {
-                Log.d(TAG,"1 observer onNext value     |" + aLong +  "|");
+                Log.d(TAG, "1 observer onNext value     |" + aLong + "|");
             }
         };
 
-        final Observer<Long> observer2 = new Observer<Long>(){
+        final Observer<Long> observer2 = new Observer<Long>() {
             @Override
             public void onCompleted() {
-                Log.d(TAG,"  2 observer onCompleted");
+                Log.d(TAG, "  2 observer onCompleted");
             }
+
             @Override
-            public void onError(Throwable e) {}
+            public void onError(Throwable e) {
+            }
+
             @Override
             public void onNext(Long aLong) {
-                Log.d(TAG,"  2 observer onNext value          |" + aLong +  "|");
+                Log.d(TAG, "  2 observer onNext value          |" + aLong + "|");
             }
         };
         final Observable<Long> observable = Observable
@@ -439,13 +529,13 @@ public class FirstFragment extends Fragment {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    if (subscriber.isUnsubscribed()){ // ! 1 !
+                    if (subscriber.isUnsubscribed()) { // ! 1 !
                         return;
                     }
                     subscriber.onNext(i);
                 }
 
-                if (subscriber.isUnsubscribed()){     // ! 2 !
+                if (subscriber.isUnsubscribed()) {     // ! 2 !
                     return;
                 }
 
@@ -453,7 +543,7 @@ public class FirstFragment extends Fragment {
             }
         };
 
-        Observable <Integer> observable = Observable
+        Observable<Integer> observable = Observable
                 .create(onSubscribe)
                 .subscribeOn(Schedulers.io());
 

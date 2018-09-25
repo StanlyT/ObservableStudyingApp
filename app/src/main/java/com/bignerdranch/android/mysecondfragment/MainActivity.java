@@ -34,32 +34,11 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         Log.d(TAG, "                                   HOST ACTIVITY onCreate");
 
-        startFirstActivity();
+        startFirstFragment();
 
-//        observableWithSubscription();
     }
 
-    private void observableWithSubscription(){
-        Observable<Long> observable = Observable
-                .interval(1, TimeUnit.SECONDS);
-        Action1<Long> action = new Action1<Long>() {
-            @Override
-            public void call(Long aLong) {
-                Log.d(TAG, "onNext :: "+aLong);
-            }
-        };
-
-        final Subscription subscription = observable.subscribe(action);
-
-        getWindow().getDecorView().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                subscription.unsubscribe();
-            }
-        }, 3000);
-    }
-
-    public void startFirstActivity() {
+    public void startFirstFragment() {
         Fragment fragment = fragmentManager.findFragmentByTag(TAG_FIRST_FRAGMENT);
         if (fragment == null) {
             fragment = Fragment.instantiate(this, FIRST_FRAGMENT);

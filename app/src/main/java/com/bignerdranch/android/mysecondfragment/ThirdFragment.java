@@ -45,7 +45,7 @@ public class ThirdFragment extends Fragment{
                 ((MainActivity)getActivity()).deleteCurrentFragment(ThirdFragment.this);
                 ((MainActivity)getActivity()).fragmentManager.popBackStack();
 //                ((MainActivity)getActivity()).onTabSelected();
-//                ((MainActivity)getActivity()).startFirstActivity();
+//                ((MainActivity)getActivity()).startFirstFragment();
 //                ((MainActivity)getActivity()).startSecondActivity();
             }
         });
@@ -69,7 +69,7 @@ public class ThirdFragment extends Fragment{
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-//        Log.d(TAG, "                                               3-rd fragment onViewStateRestored");
+//        Log.d(D, "                                               3-rd fragment onViewStateRestored");
     }
 
     @Override
