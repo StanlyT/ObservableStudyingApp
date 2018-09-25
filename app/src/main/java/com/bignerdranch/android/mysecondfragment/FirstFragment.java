@@ -92,10 +92,94 @@ public class FirstFragment extends Fragment {
 
 //        callObservableWithReplay();
 
-        callRefCountExample();
+//        callRefCountExample();
+
+        callCacheExample();
 
         Log.d(TAG, ".....................................end.of.onCreateView()...");
         return v;
+    }
+
+
+    private void callCacheExample() {
+
+        final Observer<Long> observer1 = new Observer<Long> (){
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "1 observer_________________onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {}
+
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG, "1 observer onNext  value        |" + aLong + "|");
+            }
+        };
+
+        final Observer<Long> observer2 = new Observer<Long> (){
+            @Override
+            public void onCompleted() {
+                Log.d(TAG, "2 observer_________________onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {}
+
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG, "    2 observer onNext value             |" + aLong + "|");
+            }
+        };
+
+        final Observable<Long> observable = Observable
+                .interval(1, TimeUnit.SECONDS)
+                .take(10)
+//                .publish()     //  для
+//                .refCount();   //  сравнения
+                .cache();
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "1 observer subscribed");
+                subscriptionRef1 = observable.subscribe(observer1);
+            }
+        }, 1500);
+
+        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "2 observer subscribed");
+                subscriptionRef2 = observable.subscribe(observer2);
+            }
+        }, 4000);
+
+        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "XXX 1 observer XXX unsubscribe");
+                subscriptionRef1.unsubscribe();
+            }
+        }, 5500);
+
+        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "XXX 2 observer XXX unsubscribe");
+                subscriptionRef2.unsubscribe();
+            }
+        }, 6500);
+
+        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "AGAIN 1 observer subscribe");
+                observable.subscribe(observer1);
+            }
+        }, 7000); // 6499 для сравнения
     }
 
     private void callRefCountExample() {
