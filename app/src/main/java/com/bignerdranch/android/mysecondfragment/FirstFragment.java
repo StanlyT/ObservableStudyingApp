@@ -27,6 +27,7 @@ import rx.subjects.AsyncSubject;
 import rx.subjects.BehaviorSubject;
 import rx.subjects.PublishSubject;
 import rx.subjects.ReplaySubject;
+import rx.subjects.UnicastSubject;
 import rx.subscriptions.CompositeSubscription;
 
 public class FirstFragment extends Fragment {
@@ -106,10 +107,84 @@ public class FirstFragment extends Fragment {
 
 //        callBehaviorSubjectExample();
 
-        callAsyncSubjectExample();
+//        callAsyncSubjectExample();
+
+        callUnicastSubjectExample();
 
 //        log(".....................................end.of.onCreateView()...");
         return v;
+    }
+
+    private void callUnicastSubjectExample() {
+        final Observer<Long> observer1 = new Observer<Long>() {
+            @Override
+            public void onCompleted() {
+                log("1 observer_________________onCompleted");
+            }
+            @Override
+            public void onError(Throwable e) {
+            }
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG, "1 observer onNext  value        |" + aLong + "|");
+            }
+        };
+
+        final Observer<Long> observer2 = new Observer<Long>() {
+            @Override
+            public void onCompleted() {
+                log("2 observer_________________onCompleted");
+            }
+            @Override
+            public void onError(Throwable e) {
+                log("    2 observer onError " + e.getMessage());
+            }
+            @Override
+            public void onNext(Long aLong) {
+                Log.d(TAG, "    2 observer onNext value             |" + aLong + "|");
+            }
+        };
+
+        final Observable<Long> observable = Observable
+                .interval(1, TimeUnit.SECONDS)
+                .take(20);
+
+        final UnicastSubject<Long> subject = UnicastSubject.create();
+
+        log("subject subscribe");
+        observable.subscribe(subject);
+
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                log("observer1 subscribe");
+                subscriptionRef1 = subject.subscribe(observer1);
+            }
+        }, 2500);
+
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                log("observer2 subscribe");
+                subject.subscribe(observer2);
+            }
+        }, 4500);
+
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                log("observer1 unsubscribe");
+                subscriptionRef1.unsubscribe();
+            }
+        }, 6500);
+
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                log("observer2 subscribe");
+                subject.subscribe(observer2);
+            }
+        }, 8500);
     }
 
     private void callAsyncSubjectExample() {
@@ -290,7 +365,6 @@ public class FirstFragment extends Fragment {
             }
         }, 7500);
     }
-
 
     private void callPublishSubjectExample() {
         final Observer<Long> observer1 = new Observer<Long>() {
