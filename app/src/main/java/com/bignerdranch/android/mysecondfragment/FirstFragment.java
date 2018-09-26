@@ -90,16 +90,17 @@ public class FirstFragment extends Fragment {
 
     private void startObservableWithJust() {
         Observable<String> observable = Observable
-                .just("one", "two", "three", "four");//.subscribe(s -> log(s));
+                .just("one", "two", "three", "four");
+        observable.subscribe(s -> log(s));
 
 
-        Action1<String> observer = new Action1<String>() {
-            @Override
-            public void call(String s) {
-                log(s);
-            }
-        };
-        observable.subscribe(observer);
+//        Action1<String> observer = new Action1<String>() {
+//            @Override
+//            public void call(String s) {
+//                log(s);
+//            }
+//        };
+//        observable.subscribe(observer);
     }
 
     private void callUnicastSubjectExample() {
