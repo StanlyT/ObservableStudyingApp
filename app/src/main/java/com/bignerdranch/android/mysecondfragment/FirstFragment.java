@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -81,26 +82,44 @@ public class FirstFragment extends Fragment {
 //        callBehaviorSubjectExample();
 //        callAsyncSubjectExample();
 //        callUnicastSubjectExample();
-
-        startObservableWithJust();
+//        startObservableWithJust();
+        startCustomObservableWithLambda();
 
 //        log(".....................................end.of.onCreateView()...");
         return v;
     }
 
+    private void startCustomObservableWithLambda() {
+        Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> observer) {
+                try {
+                    if (!observer.isUnsubscribed()) {
+                        for(int i=0; i<5; i++){
+                            observer.onNext(i);
+                        }
+                    }
+                    observer.onCompleted();
+                } catch (Exception e) {
+                    observer.onError(e);
+                }
+            }
+        }).subscribe(new Observer<Integer>(){
+            @Override
+            public void onCompleted() { log("onCompleted"); }
+            @Override
+            public void onError(Throwable e) { log("error"); }
+            @Override
+            public void onNext(Integer integer) {
+                log("onNext :: "+integer);
+            }
+        });
+    }
+
     private void startObservableWithJust() {
         Observable<String> observable = Observable
-                .just("one", "two", "three", "four");
+                .just("one", "two", "three", "four", "five");
         observable.subscribe(s -> log(s));
-
-
-//        Action1<String> observer = new Action1<String>() {
-//            @Override
-//            public void call(String s) {
-//                log(s);
-//            }
-//        };
-//        observable.subscribe(observer);
     }
 
     private void callUnicastSubjectExample() {
@@ -109,9 +128,11 @@ public class FirstFragment extends Fragment {
             public void onCompleted() {
                 log("1 observer_________________onCompleted");
             }
+
             @Override
             public void onError(Throwable e) {
             }
+
             @Override
             public void onNext(Long aLong) {
                 Log.d(TAG, "1 observer onNext  value        |" + aLong + "|");
@@ -123,10 +144,12 @@ public class FirstFragment extends Fragment {
             public void onCompleted() {
                 log("2 observer_________________onCompleted");
             }
+
             @Override
             public void onError(Throwable e) {
                 log("    2 observer onError " + e.getMessage());
             }
+
             @Override
             public void onNext(Long aLong) {
                 Log.d(TAG, "    2 observer onNext value             |" + aLong + "|");
@@ -181,9 +204,11 @@ public class FirstFragment extends Fragment {
             public void onCompleted() {
                 log("1 observer_________________onCompleted");
             }
+
             @Override
             public void onError(Throwable e) {
             }
+
             @Override
             public void onNext(Long aLong) {
                 Log.d(TAG, "1 observer onNext  value        |" + aLong + "|");
@@ -195,9 +220,11 @@ public class FirstFragment extends Fragment {
             public void onCompleted() {
                 log("2 observer_________________onCompleted");
             }
+
             @Override
             public void onError(Throwable e) {
             }
+
             @Override
             public void onNext(Long aLong) {
                 Log.d(TAG, "    2 observer onNext value             |" + aLong + "|");
@@ -326,7 +353,8 @@ public class FirstFragment extends Fragment {
                 .interval(1, TimeUnit.SECONDS)
                 .take(10);
 
-        final ReplaySubject<Long> subject = ReplaySubject.create();     log("subscribe subject");
+        final ReplaySubject<Long> subject = ReplaySubject.create();
+        log("subscribe subject");
         observable.subscribe(subject);
 
         getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
@@ -391,7 +419,8 @@ public class FirstFragment extends Fragment {
                 .interval(1, TimeUnit.SECONDS)
                 .take(10);
 
-        final PublishSubject<Long> subject = PublishSubject.create();     log("subscribe subject");
+        final PublishSubject<Long> subject = PublishSubject.create();
+        log("subscribe subject");
         observable.subscribe(subject);
 
         getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
@@ -923,14 +952,15 @@ public class FirstFragment extends Fragment {
     }
 
     private void startObservableWithAction() {
-        Observable<String> observable = Observable.from(new String[]{"one", "two", "three"});
-        Action1<String> action = new Action1<String>() {
-            @Override
-            public void call(String s) {
-                Log.d(TAG, "onNext: " + s);
-            }
-        };
-        observable.subscribe(action);
+        Observable<String> observable = Observable
+                .from(new String[]{"one", "two", "three"});
+//        Action1<String> action = new Action1<String>() {
+//            @Override
+//            public void call(String s) {
+//                Log.d(TAG, "onNext: " + s);
+//            }
+//        };
+        observable.subscribe(s -> log(s));
 
     }
 
