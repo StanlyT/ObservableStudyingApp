@@ -83,10 +83,50 @@ public class FirstFragment extends Fragment {
 //        callUnicastSubjectExample();
 //        startObservableWithJust();
 //        startCustomObservableWithLambda();
-        lambdaObservableWithRange();
+//        lambdaObservableWithRange();
+//        lambdaObservableWithCreate();
+        testMyJustImplementation();;
 
 //        log(".....................................end.of.onCreateView()...");
         return v;
+    }
+
+    private void testMyJustImplementation() {
+//      Observable<String> observable = Observable.just("Data");  // fabric mehtod
+        Observable<String> observable = justObservable("Data"); // my method
+        observable.subscribe(string -> log(string));
+    }
+
+    public <T> Observable <T> justObservable(T t) {
+        return Observable.create(subscriber -> {
+            try {
+                if(!subscriber.isUnsubscribed()){
+                    subscriber.onNext(t);
+                    subscriber.onCompleted();
+                }
+            } catch (Exception e) {
+                subscriber.onError(e);
+            }
+        });
+    }
+    
+    private void lambdaObservableWithCreate() {
+        out("До");
+        Observable <Integer> ints = Observable.create(new Observable.OnSubscribe<Integer>(){
+            @Override
+            public void call(Subscriber<? super Integer> subscriber){
+                out("create");
+                subscriber.onNext(5);
+                subscriber.onNext(6);
+                subscriber.onNext(7);
+                subscriber.onNext(8);
+                subscriber.onNext(9);
+                out("end");
+            }
+        });
+        out("Начало");
+        ints.subscribe(i -> out(" Element :" + i));
+        out("Конец");
     }
 
     private void lambdaObservableWithRange() {
