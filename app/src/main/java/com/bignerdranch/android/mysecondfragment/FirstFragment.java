@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -83,17 +82,24 @@ public class FirstFragment extends Fragment {
 //        callAsyncSubjectExample();
 //        callUnicastSubjectExample();
 //        startObservableWithJust();
-        startCustomObservableWithLambda();
+//        startCustomObservableWithLambda();
+        lambdaObservableWithRange();
 
 //        log(".....................................end.of.onCreateView()...");
         return v;
+    }
+
+    private void lambdaObservableWithRange() {
+        out("До");
+        Observable.range(5,3).subscribe(i -> out(i));
+        out("После");
     }
 
     private void startCustomObservableWithLambda() {
         Observable.create((Observable.OnSubscribe<Integer>) observer -> {
             try {
                 if (!observer.isUnsubscribed()) {
-                    for(int i=0; i<5; i++){
+                    for (int i = 0; i < 5; i++) {
                         observer.onNext(i);
                     }
                 }
@@ -101,14 +107,20 @@ public class FirstFragment extends Fragment {
             } catch (Exception e) {
                 observer.onError(e);
             }
-        }).subscribe(new Observer<Integer>(){
+        }).subscribe(new Observer<Integer>() {
             @Override
-            public void onCompleted() { log("onCompleted"); }
+            public void onCompleted() {
+                log("onCompleted");
+            }
+
             @Override
-            public void onError(Throwable e) { log("error"); }
+            public void onError(Throwable e) {
+                log("error");
+            }
+
             @Override
             public void onNext(Integer integer) {
-                log("onNext :: "+integer);
+                log("onNext :: " + integer);
             }
         });
     }
@@ -1298,6 +1310,10 @@ public class FirstFragment extends Fragment {
                         Log.d(TAG, "call onNext " + intArg);
                     }
                 });
+    }
+
+    private void out(Object o) {
+        log(Thread.currentThread().getName() + " :: " + o);
     }
 
     private void log(String d) {
