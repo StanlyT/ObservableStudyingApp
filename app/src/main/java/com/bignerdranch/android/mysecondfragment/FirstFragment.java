@@ -53,66 +53,53 @@ public class FirstFragment extends Fragment {
             }
         });
 
-//        createObservableWithFrom();
-
-//        createObservableWithRange();
-
-//        createObservableWithInterval();
-
-//        createObservableWithFromCallable();
-
-//        createObservableWithMap();
-
-//        createObservableWithBuffer(4);
-
-//        createObservableWithTake(8);
-
-//        createObservableWithSkip(10);
-
-//        observableWithFilter();
-
-//        observableWithMerge();
-
-//        observableWithZip();
-
-//        observableWithTakeUntil();
-
-//        observableWithAll();
-
-//        observableWithAction();
-
-//        observableWithSubscription();
-
-//        observableWithCompositeSubscription();
-
-//        callFirstCustomObservable();
-
-//        callSecondCustomObservable();
-
-//        callColdObservableExample();
-
-//        callHotObservableExample();
-
-//        callObservableWithReplay();
-
-//        callObservableWithReplay();
-
+//        startObservableWithFrom();
+//        startObservableWithRange();
+//        startObservableWithInterval();
+//        startObservableWithFromCallable();
+//        startObservableWithMap();
+//        startObservableWithBuffer(4);
+//        startObservableWithTake(8);
+//        startObservableWithSkip(10);
+//        startObservableWithFilter();
+//        startObservableWithMerge();
+//        startObservableWithZip();
+//        startObservableWithTakeUntil();
+//        startObservableWithAll();
+//        startObservableWithAction();
+//        startObservableWithSubscription();
+//        startObservableWithCompositeSubscription();
+//        startFirstCustomObservable();
+//        startSecondCustomObservable();
+//        startColdObservableExample();
+//        startHotObservableExample();
+//        startObservableWithReplay();
 //        callRefCountExample();
-
 //        callCacheExample();
-
 //        callPublishSubjectExample();
-
 //        callReplaySubjectExample();
-
 //        callBehaviorSubjectExample();
-
 //        callAsyncSubjectExample();
+//        callUnicastSubjectExample();
 
-        callUnicastSubjectExample();
+        startObservableWithJust();
 
 //        log(".....................................end.of.onCreateView()...");
         return v;
+    }
+
+    private void startObservableWithJust() {
+        Observable<String> observable = Observable
+                .just("one", "two", "three", "four");//.subscribe(s -> log(s));
+
+
+        Action1<String> observer = new Action1<String>() {
+            @Override
+            public void call(String s) {
+                log(s);
+            }
+        };
+        observable.subscribe(observer);
     }
 
     private void callUnicastSubjectExample() {
@@ -597,7 +584,7 @@ public class FirstFragment extends Fragment {
         }, 6500);
     }
 
-    private void callObservableWithReplay() {
+    private void startObservableWithReplay() {
         final Observer<Long> observer1 = new Observer<Long>() {
             @Override
             public void onCompleted() {
@@ -667,7 +654,7 @@ public class FirstFragment extends Fragment {
         }, 20000);
     }
 
-    private void callHotObservableExample() {
+    private void startHotObservableExample() {
         final Observer<Long> observer1 = new Observer<Long>() {
             @Override
             public void onCompleted() {
@@ -725,7 +712,7 @@ public class FirstFragment extends Fragment {
         }, 4500);
     }
 
-    private void callColdObservableExample() {
+    private void startColdObservableExample() {
         final Observer<Long> observer1 = new Observer<Long>() {
             @Override
             public void onCompleted() {
@@ -778,7 +765,7 @@ public class FirstFragment extends Fragment {
         }, 8500);
     }
 
-    private void callSecondCustomObservable() {
+    private void startSecondCustomObservable() {
         Observable.OnSubscribe<Integer> onSubscribe = new Observable.OnSubscribe<Integer>() {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
@@ -835,7 +822,7 @@ public class FirstFragment extends Fragment {
         }, 2000);
     }
 
-    private void callFirstCustomObservable() {
+    private void startFirstCustomObservable() {
         Observable.OnSubscribe<Integer> onSubscribe = new Observable.OnSubscribe<Integer>() {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
@@ -874,7 +861,7 @@ public class FirstFragment extends Fragment {
         observable.subscribe(observer);
     }
 
-    private void observableWithCompositeSubscription() {
+    private void startObservableWithCompositeSubscription() {
         final Subscription subscription1;
         final Subscription subscription2;
 
@@ -914,7 +901,7 @@ public class FirstFragment extends Fragment {
 
     }
 
-    private void observableWithSubscription() {
+    private void startObservableWithSubscription() {
         Observable<Long> observable = Observable
                 .interval(1, TimeUnit.SECONDS);
         Action1<Long> action = new Action1<Long>() {
@@ -934,7 +921,7 @@ public class FirstFragment extends Fragment {
         }, 3000);
     }
 
-    private void observableWithAction() {
+    private void startObservableWithAction() {
         Observable<String> observable = Observable.from(new String[]{"one", "two", "three"});
         Action1<String> action = new Action1<String>() {
             @Override
@@ -946,7 +933,7 @@ public class FirstFragment extends Fragment {
 
     }
 
-    private void observableWithAll() {
+    private void startObservableWithAll() {
         Func1<Integer, Boolean> lessThanTen = new Func1<Integer, Boolean>() {
             @Override
             public Boolean call(Integer i) {
@@ -977,7 +964,7 @@ public class FirstFragment extends Fragment {
         observable.subscribe(observer);
     }
 
-    private void observableWithTakeUntil() {
+    private void startObservableWithTakeUntil() {
         Func1<Integer, Boolean> untilFour = new Func1<Integer, Boolean>() {
             @Override
             public Boolean call(Integer i) {
@@ -1009,7 +996,7 @@ public class FirstFragment extends Fragment {
         observable.subscribe(observer);
     }
 
-    private void observableWithZip() {
+    private void startObservableWithZip() {
         Func2<Integer, String, String> func2 = new Func2<Integer, String, String>() {
             @Override
             public String call(Integer integer, String s) {
@@ -1040,7 +1027,7 @@ public class FirstFragment extends Fragment {
         observable.subscribe(observer);
     }
 
-    private void observableWithMerge() {
+    private void startObservableWithMerge() {
         Observable<Integer> observable = Observable
                 .from(new Integer[]{1, 2, 3, 4, 5})
                 .mergeWith(Observable.from(new Integer[]{6, 7, 8, 9, 10}));
@@ -1064,7 +1051,7 @@ public class FirstFragment extends Fragment {
         observable.subscribe(observer);
     }
 
-    private void observableWithFilter() {
+    private void startObservableWithFilter() {
         Func1<String, Boolean> func1 = new Func1<String, Boolean>() {
             @Override
             public Boolean call(String s) {
@@ -1095,7 +1082,7 @@ public class FirstFragment extends Fragment {
         observable.subscribe(observer);
     }
 
-    private void createObservableWithSkip(int count) {
+    private void startObservableWithSkip(int count) {
         Observable<Integer> observable = Observable
                 .from(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16})
                 .skip(count);
@@ -1118,7 +1105,7 @@ public class FirstFragment extends Fragment {
         observable.subscribe(observer);
     }
 
-    private void createObservableWithTake(final int count) {
+    private void startObservableWithTake(final int count) {
         Observable<Integer> observable = Observable
                 .from(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16})
                 .take(count);
@@ -1141,7 +1128,7 @@ public class FirstFragment extends Fragment {
         observable.subscribe(observer);
     }
 
-    private void createObservableWithBuffer(int count) {
+    private void startObservableWithBuffer(int count) {
         Observable<List<Integer>> observable = Observable
                 .from(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
                 .buffer(count);
@@ -1164,7 +1151,7 @@ public class FirstFragment extends Fragment {
         observable.subscribe(observer);
     }
 
-    private void createObservableWithMap() {
+    private void startObservableWithMap() {
         Func1<String, Integer> stringToInteger = new Func1<String, Integer>() {
             @Override
             public Integer call(String s) {
@@ -1195,7 +1182,7 @@ public class FirstFragment extends Fragment {
         observable.subscribe(observer);
     }
 
-    private void createObservableWithFrom() {
+    private void startObservableWithFrom() {
         Log.d(TAG, "\n.");
 
         Observable<String> observable = Observable.from(new String[]{"one", "two", "three"});
@@ -1222,7 +1209,7 @@ public class FirstFragment extends Fragment {
         Log.d(TAG, "\n.");
     }
 
-    private void createObservableWithRange() {
+    private void startObservableWithRange() {
         Log.d(TAG, "\n.");
 
         Observable<Integer> observable = Observable.range(100, 10);
@@ -1249,7 +1236,7 @@ public class FirstFragment extends Fragment {
         Log.d(TAG, "\n.");
     }
 
-    public void createObservableWithInterval() {
+    public void startObservableWithInterval() {
         Log.d(TAG, "\n.");
 
         Observable<Long> observable = Observable.interval(1, TimeUnit.SECONDS);
@@ -1273,9 +1260,7 @@ public class FirstFragment extends Fragment {
         Log.d(TAG, "\n.");
     }
 
-    public void createObservableWithFromCallable() {
-        Log.d(TAG, "\n.");
-
+    public void startObservableWithFromCallable() {
         Observable.fromCallable(new MyCallalbeClassWithLongOperation("5"))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -1285,7 +1270,6 @@ public class FirstFragment extends Fragment {
                         Log.d(TAG, "call onNext " + intArg);
                     }
                 });
-        Log.d(TAG, "\n.");
     }
 
     private void log(String d) {
@@ -1295,6 +1279,7 @@ public class FirstFragment extends Fragment {
     private void postDelayed(Runnable runnable, long ms) {
         getActivity().getWindow().getDecorView().postDelayed(runnable, ms);
     }
+
 //    public void onCreate(Bundle bundle) {
 //        super.onCreate(bundle);
 //        Log.d(TAG, "1st fragment onCreate");
