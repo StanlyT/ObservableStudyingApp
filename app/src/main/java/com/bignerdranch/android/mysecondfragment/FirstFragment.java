@@ -90,19 +90,16 @@ public class FirstFragment extends Fragment {
     }
 
     private void startCustomObservableWithLambda() {
-        Observable.create(new Observable.OnSubscribe<Integer>() {
-            @Override
-            public void call(Subscriber<? super Integer> observer) {
-                try {
-                    if (!observer.isUnsubscribed()) {
-                        for(int i=0; i<5; i++){
-                            observer.onNext(i);
-                        }
+        Observable.create((Observable.OnSubscribe<Integer>) observer -> {
+            try {
+                if (!observer.isUnsubscribed()) {
+                    for(int i=0; i<5; i++){
+                        observer.onNext(i);
                     }
-                    observer.onCompleted();
-                } catch (Exception e) {
-                    observer.onError(e);
                 }
+                observer.onCompleted();
+            } catch (Exception e) {
+                observer.onError(e);
             }
         }).subscribe(new Observer<Integer>(){
             @Override
