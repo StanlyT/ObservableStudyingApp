@@ -85,22 +85,64 @@ public class FirstFragment extends Fragment {
 //        startCustomObservableWithLambda();
 //        lambdaObservableWithRange();
 //        lambdaObservableWithCreate();
-        testMyJustImplementation();;
+//        testMyJustImplementation();
+        testSubscribeOnObserveOn();
 
 //        log(".....................................end.of.onCreateView()...");
         return v;
     }
 
+    private void testSubscribeOnObserveOn() {
+        final Observer<Integer> observer1 = new Observer<Integer>() {
+            @Override
+            public void onCompleted() {
+                out("1 observer____onCompleted");
+            }
+            @Override
+            public void onError(Throwable e) {
+            }
+            @Override
+            public void onNext(Integer value) {
+                out("1 observer onNext  value        |" + value + "|");
+            }
+        };
+
+        Observable.OnSubscribe<Integer> onSubscribe = new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                out("Call");
+                for (int i = 0; i < 3; i++) {
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(100);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    subscriber.onNext(i);
+                }
+                subscriber.onCompleted();
+            }
+        };
+
+        Observable<Integer> observable = Observable
+                .create(onSubscribe)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.computation()); // AndroidSchedulers.mainThread()
+
+        out("subscribe");
+        observable.subscribe(observer1);
+        out("done");
+    }
+
     private void testMyJustImplementation() {
-//      Observable<String> observable = Observable.just("Data");  // fabric mehtod
-        Observable<String> observable = justObservable("Data"); // my method
+//      Observable<String> observable = Observable.just("Data"); // fabric mehtod
+        Observable<String> observable = justObservable("Data");// my method
         observable.subscribe(string -> log(string));
     }
 
-    public <T> Observable <T> justObservable(T t) {
+    public <T> Observable<T> justObservable(T t) {
         return Observable.create(subscriber -> {
             try {
-                if(!subscriber.isUnsubscribed()){
+                if (!subscriber.isUnsubscribed()) {
                     subscriber.onNext(t);
                     subscriber.onCompleted();
                 }
@@ -109,12 +151,12 @@ public class FirstFragment extends Fragment {
             }
         });
     }
-    
+
     private void lambdaObservableWithCreate() {
         out("До");
-        Observable <Integer> ints = Observable.create(new Observable.OnSubscribe<Integer>(){
+        Observable<Integer> ints = Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
-            public void call(Subscriber<? super Integer> subscriber){
+            public void call(Subscriber<? super Integer> subscriber) {
                 out("create");
                 subscriber.onNext(5);
                 subscriber.onNext(6);
@@ -131,7 +173,7 @@ public class FirstFragment extends Fragment {
 
     private void lambdaObservableWithRange() {
         out("До");
-        Observable.range(5,3).subscribe(i -> out(i));
+        Observable.range(5, 3).subscribe(i -> out(i));
         out("После");
     }
 
@@ -1353,7 +1395,7 @@ public class FirstFragment extends Fragment {
     }
 
     private void out(Object o) {
-        log(Thread.currentThread().getName() + " :: " + o);
+        log(Thread.currentThread().getName() + " : " + o);
     }
 
     private void log(String d) {
